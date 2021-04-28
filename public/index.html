@@ -10,8 +10,11 @@
     <h1>Chat app</h1>
     <form id="message-form">
     <input type="text" name="message" placeholder="Message">
-    <button id="send">Send Message</button>
+    <button id="send">Send Message</button> <!--For sending chat message-->
     </form>
+    <button id="location">Share Location</button><!--For sending geolocation to other users-->
+    <p id="status"></p>
+    <p id="map-link" target="_blank"></p>
     
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/chat.js"></script>

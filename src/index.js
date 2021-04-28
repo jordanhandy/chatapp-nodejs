@@ -26,6 +26,9 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     socket.on('messageSend',(message)=>{
         io.emit('message',message)
     })
+    socket.on('sendLocation',(coords)=>{
+        io.emit('message', `Find me here: https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+    })
 
     //! Send to all users when another user leaves
     socket.on('disconnect',()=>{
