@@ -1,15 +1,17 @@
 const socket = io(); // initiate the socket
 
-// elements
+// elements - identify different sections of HTML doc
 const $messageForm = document.querySelector("#message-form")
 const $messageFormInput = $messageForm.querySelector('input');
 const $messageFormButton = $messageForm.querySelector('#send');
 const $locationButton = document.querySelector('#location');
 const $messages = document.querySelector('#messages');
 
-// Templates
-const messageTemplate = document.querySelector('#message-template').innerHTML
+// Templates - Mustache
+const messageTemplate = document.querySelector('#message-template').innerHTML;
+const locationTemplate = document.querySelector('#location-template').innerHTML;
 
+// Receive message data from server, and render
 socket.on("message", (messageData) => {
   console.log(messageData);
   const html = Mustache.render(messageTemplate,{
@@ -18,16 +20,27 @@ socket.on("message", (messageData) => {
   $messages.insertAdjacentHTML('beforeend',html)
 });
 
+socket.on('locationMessage',(locationData)=>{
+    console.log(locationData);
+    const html = Mustache.render(locationTemplate,{
+        locationMessage: locationData
+    })
+    $messages.insertAdjacentHTML('beforeend',html)
+})
+
+// Listen for submit button
 $messageForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+  e.preventDefault(); // prevent form from refreshing on submit
   $messageFormButton.setAttribute('disabled','disabled') // disables form button when message sent
   const message = e.target.elements.message.value;
+  // if message is empty, render nothing
   if(message===''){
       console.log("Message is empty!  Type something first");
       $messageFormButton.removeAttribute('disabled');
       $messageFormInput.value ='';
       return
   }
+  // send the message to server
   socket.emit("messageSend", message,(error)=>{
       $messageFormButton.removeAttribute('disabled');
       $messageFormInput.value = '';
@@ -62,13 +75,3 @@ document.querySelector("#location").addEventListener("click", () => {
     });
   });
 });
-
-// socket.on('countUpdated',(count)=>{ // listen for countUpdated
-//     console.log("The count has been updated",count) // print a message with the socket param
-// })
-// // Event listener for click
-// document.querySelector('#increment').addEventListener('click',()=>{
-//     console.log("Clicked!")
-//     // when the button is clicked, send an increment emitter back to socket
-//     socket.emit('increment')
-// })

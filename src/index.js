@@ -34,7 +34,7 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     })
     socket.on('sendLocation',(coords,callback)=>{
         // When the location string is sent, output a GMaps link
-        io.emit('message', `Find me here: https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+        io.emit('locationMessage', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
         callback(); //! ACKNOWLEDGE
         // Back to client
     })
@@ -43,14 +43,6 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     socket.on('disconnect',()=>{
         io.emit('message',"A user has left the chat");
     })
-    // socket.emit('countUpdated',count) // Send socket event from server
-    
-    // // server listens for increment, and passes back the count
-    // socket.on('increment',()=>{
-    //     count++;
-    //     //socket.emit('countUpdated',count)  //! Emits event to single connection
-    //     io.emit('countUpdated',count) //! Emits event to all clients
-    // })
 })
 
 app.get("/",(req,res)=>{
