@@ -2,9 +2,10 @@ const socket = io();  // initiate the socket
 socket.on('message',(messageData)=>{
     console.log(messageData)
 })
-document.querySelector('#send').addEventListener('click',()=>{
-    var input = document.querySelector('#message').value
-    socket.emit('messageSend',input);
+document.querySelector('#message-form').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const message = e.target.elements.message.value
+    socket.emit('messageSend',message);
 })
 
 // socket.on('countUpdated',(count)=>{ // listen for countUpdated

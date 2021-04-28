@@ -19,9 +19,17 @@ app.use(express.static(publiDirPath));
 // let count = 0;
 io.on('connection',(socket)=>{  //? The socket parameter holds information about the socket connection
     console.log("new web socket connection");
-    socket.emit('message','Welcome');
+    socket.emit('message','Welcome'); // send to all users
+    socket.broadcast.emit('message','A new User has joined the chat'); // send to all users except the current connectio
+    
+    //! On changes
     socket.on('messageSend',(message)=>{
         io.emit('message',message)
+    })
+
+    //! Send to all users when another user leaves
+    socket.on('disconnect',()=>{
+        io.emit('message',"A user has left the chat");
     })
     // socket.emit('countUpdated',count) // Send socket event from server
     
