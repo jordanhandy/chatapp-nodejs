@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const Filter = require('bad-words');
 const path = require('path');
 const socketio = require('socket.io')
 
@@ -23,11 +24,18 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     socket.broadcast.emit('message','A new User has joined the chat'); // send to all users except the current connectio
     
     //! On changes
-    socket.on('messageSend',(message)=>{
+    socket.on('messageSend',(message,callback)=>{
+        const filter = new Filter();
+        if(filter.isProfane(message)){
+            return callback("Profanity is not allowed");  //? only sending callback data if profane
+        }
         io.emit('message',message)
+        callback(); //? otherwise, send no callback data
     })
-    socket.on('sendLocation',(coords)=>{
+    socket.on('sendLocation',(coords,callback)=>{
+        // When the location string is sent, output a GMaps link
         io.emit('message', `Find me here: https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+        callback();
     })
 
     //! Send to all users when another user leaves

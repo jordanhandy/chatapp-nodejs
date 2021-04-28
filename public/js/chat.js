@@ -6,8 +6,14 @@ socket.on("message", (messageData) => {
 document.querySelector("#message-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const message = e.target.elements.message.value;
-  socket.emit("messageSend", message);
+  socket.emit("messageSend", message,(error)=>{
+      if(error){ //? if the function param was received, then the message was prfane
+          return console.log(error)
+      }
+      console.log("The message was delivered!");
+  });
 });
+
 // Get the location button click
 document.querySelector("#location").addEventListener("click", () => {
   if (!navigator.geolocation) {
@@ -23,6 +29,8 @@ document.querySelector("#location").addEventListener("click", () => {
     socket.emit("sendLocation", {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
+    },(callback)=>{
+        console.log("Location sent!");
     });
   });
 });
