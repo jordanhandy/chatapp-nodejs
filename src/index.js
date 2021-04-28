@@ -35,7 +35,8 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     socket.on('sendLocation',(coords,callback)=>{
         // When the location string is sent, output a GMaps link
         io.emit('message', `Find me here: https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
-        callback();
+        callback(); //! ACKNOWLEDGE
+        // Back to client
     })
 
     //! Send to all users when another user leaves

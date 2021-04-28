@@ -1,12 +1,29 @@
 const socket = io(); // initiate the socket
+
+// elements
+const $messageForm = document.querySelector("#message-form")
+const $messageFormInput = $messageForm.querySelector('input');
+const $messageFormButton = $messageForm.querySelector('#send');
+const $locationButton = document.querySelector('#location');
+
 socket.on("message", (messageData) => {
   console.log(messageData);
 });
 
-document.querySelector("#message-form").addEventListener("submit", (e) => {
+$messageForm.addEventListener("submit", (e) => {
   e.preventDefault();
+  $messageFormButton.setAttribute('disabled','disabled') // disables form button when message sent
   const message = e.target.elements.message.value;
+  if(message===''){
+      console.log("Message is empty!  Type something first");
+      $messageFormButton.removeAttribute('disabled');
+      $messageFormInput.value ='';
+      return
+  }
   socket.emit("messageSend", message,(error)=>{
+      $messageFormButton.removeAttribute('disabled');
+      $messageFormInput.value = '';
+      $messageFormInput.focus();
       if(error){ //? if the function param was received, then the message was prfane
           return console.log(error)
       }
@@ -16,6 +33,7 @@ document.querySelector("#message-form").addEventListener("submit", (e) => {
 
 // Get the location button click
 document.querySelector("#location").addEventListener("click", () => {
+    $locationButton.setAttribute('disabled','disabled');
   if (!navigator.geolocation) {
     // if geolocation not supported on browser
     return alert("Geolocation is not supported by your browser");
@@ -29,8 +47,10 @@ document.querySelector("#location").addEventListener("click", () => {
     socket.emit("sendLocation", {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
-    },(callback)=>{
-        console.log("Location sent!");
+    },()=>{
+        //! Receive acknowledgement and do something
+        console.log("Location shared!");
+        $locationButton.removeAttribute('disabled');
     });
   });
 });
