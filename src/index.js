@@ -3,6 +3,7 @@ const express = require('express');
 const Filter = require('bad-words');
 const path = require('path');
 const socketio = require('socket.io')
+const { generateMessage } = require('./utils/messages');
 
 const app = express();
 const server = http.createServer(app); // create server with low-level http core module
@@ -20,8 +21,9 @@ app.use(express.static(publiDirPath));
 // let count = 0;
 io.on('connection',(socket)=>{  //? The socket parameter holds information about the socket connection
     console.log("new web socket connection");
-    socket.emit('message','Welcome'); // send to all users
-    socket.broadcast.emit('message','A new User has joined the chat'); // send to all users except the current connectio
+    socket.emit('message',generateMessage("Welcome"))
+    // send to all users
+    socket.broadcast.emit('message',generateMessage("A new user has joined the chat")); // send to all users except the current connectio
     
     //! On changes
     socket.on('messageSend',(message,callback)=>{
@@ -29,7 +31,7 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
         if(filter.isProfane(message)){
             return callback("Profanity is not allowed");  //? only sending callback data if profane
         }
-        io.emit('message',message)
+        io.emit('message',generateMessage(message))
         callback(); //? otherwise, send no callback data
     })
     socket.on('sendLocation',(coords,callback)=>{
@@ -41,7 +43,7 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
 
     //! Send to all users when another user leaves
     socket.on('disconnect',()=>{
-        io.emit('message',"A user has left the chat");
+        io.emit('message',generateMessage("A user has left the chat"));
     })
 })
 
