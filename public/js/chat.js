@@ -11,6 +11,9 @@ const $messages = document.querySelector('#messages');
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const locationTemplate = document.querySelector('#location-template').innerHTML;
 
+// Options - Rooms
+const {username, room} = Qs.parse(location.search,{ ignoreQueryPrefix: true })
+
 // Receive message data from server, and render
 socket.on("message", (messageData) => {
   console.log(messageData);
@@ -77,3 +80,5 @@ document.querySelector("#location").addEventListener("click", () => {
     });
   });
 });
+
+socket.emit('join',{username, room});

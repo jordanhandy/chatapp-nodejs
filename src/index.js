@@ -21,17 +21,21 @@ app.use(express.static(publiDirPath));
 // let count = 0;
 io.on('connection',(socket)=>{  //? The socket parameter holds information about the socket connection
     console.log("new web socket connection");
-    socket.emit('message',generateMessage("Welcome"))
-    // send to all users
-    socket.broadcast.emit('message',generateMessage("A new user has joined the chat")); // send to all users except the current connectio
-    
+
+    socket.on('join',({username, room})=>{
+        socket.join(room)
+        socket.emit('message',generateMessage("Welcome"))
+        // send to all users
+        socket.broadcast.to(room).emit('message',generateMessage(`${username}has joined the chat`)); // send to all users except the current connection
+    })
+
     //! On changes
     socket.on('messageSend',(message,callback)=>{
         const filter = new Filter();
         if(filter.isProfane(message)){
             return callback("Profanity is not allowed");  //? only sending callback data if profane
         }
-        io.emit('message',generateMessage(message))
+        io.to().emit('message',generateMessage(message))
         callback(); //? otherwise, send no callback data
     })
     socket.on('sendLocation',(coords,callback)=>{
