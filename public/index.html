@@ -4,23 +4,45 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="/css/styles.min.css" />
+    <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon" />
+    <title>Chat App</title>
   </head>
   <body>
-    <h1>Chat app</h1>
-    <div id="messages"></div>
-    <form id="message-form">
-      <input type="text" name="message" placeholder="Message" />
-      <button id="send">Send Message</button>
-      <!--For sending chat message-->
-    </form>
-    <button id="location">Share Location</button
-    ><!--For sending geolocation to other users-->
+    <div class="chat">
+      <div class="chat__sidebar">
+        <h1>Chat App</h1>
+      </div>
+      <div class="chat__main">
+        <div id="messages" class="chat__messages"></div>
+        <div class="compose">
+          <form id="message-form">
+            <input type="text" name="message" placeholder="Message" />
+            <button id="send">Send Message</button>
+            <!--For sending chat message-->
+          </form>
+          <button id="location">Share Location</button
+          ><!--For sending geolocation to other users-->
+        </div>
+      </div>
+    </div>
     <script id="location-template" type="text/html">
-      <div><p><a href="{{locationMessage}}"target="_blank">{{createdAt}} - My Current Location</a></p></div>
-  </script>
+      <div class="message">
+        <p>
+          <span class="message__name">Some User Name</span>
+          <span class="message__meta">{{createdAt}}</span>
+        </p>
+        <p>
+          <a href="{{locationMessage}}" target="_blank">My Current Location</a>
+        </p>
+      </div>
+    </script>
     <script id="message-template" type="text/html">
-        <div><p>{{createdAt}} - {{message}}</p></div>
+      <p>
+        <span class="message__name">Some User Name</span>
+        <span class="message__meta">{{createdAt}}</span>
+      </p>
+      <div class="message"><p>{{message}}</p></div>
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
