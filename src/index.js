@@ -3,7 +3,7 @@ const express = require('express');
 const Filter = require('bad-words');
 const path = require('path');
 const socketio = require('socket.io')
-const { generateMessage } = require('./utils/messages');
+const { generateMessage, generateLocationMessage } = require('./utils/messages');
 
 const app = express();
 const server = http.createServer(app); // create server with low-level http core module
@@ -36,7 +36,7 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     })
     socket.on('sendLocation',(coords,callback)=>{
         // When the location string is sent, output a GMaps link
-        io.emit('locationMessage', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+        io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`));
         callback(); //! ACKNOWLEDGE
         // Back to client
     })
