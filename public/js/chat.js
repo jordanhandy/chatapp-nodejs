@@ -18,6 +18,7 @@ const {username, room} = Qs.parse(location.search,{ ignoreQueryPrefix: true })
 socket.on("message", (messageData) => {
   console.log(messageData);
   const html = Mustache.render(messageTemplate,{
+      username:messageData.username,
       message:messageData.text,
     createdAt: moment(messageData.createdAt).format('h:mm A')}
       );
@@ -27,6 +28,7 @@ socket.on("message", (messageData) => {
 socket.on('locationMessage',(locationData)=>{
     console.log(locationData);
     const html = Mustache.render(locationTemplate,{
+        username:locationData.username,
         locationMessage: locationData.url,
         createdAt: moment(locationData.createdAt).format('h:mm A')
     })
@@ -38,13 +40,6 @@ $messageForm.addEventListener("submit", (e) => {
   e.preventDefault(); // prevent form from refreshing on submit
   $messageFormButton.setAttribute('disabled','disabled') // disables form button when message sent
   const message = e.target.elements.message.value;
-  // if message is empty, render nothing
-  if(message===''){
-      console.log("Message is empty!  Type something first");
-      $messageFormButton.removeAttribute('disabled');
-      $messageFormInput.value ='';
-      return
-  }
   // send the message to server
   socket.emit("messageSend", message,(error)=>{
       $messageFormButton.removeAttribute('disabled');

@@ -33,9 +33,15 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
             return callback(error)
         }
         socket.join(user.room)
-        socket.emit('message',generateMessage("Welcome"))
+        socket.emit('message',generateMessage("Chatbot","Welcome"))
         // send to all users
-        socket.broadcast.to(user.room).emit('message',generateMessage(`${user.username} has joined the chat`)); // send to all users except the current connection
+        socket.broadcast.to(user.room).emit('message',generateMessage("Chatbot",`${user.username} has joined the chat`)); // send to all users except the current connection
+        // name of data to send, data to send
+        io.to(user.room).emit('roomData',{
+            room:user.room,
+            users:getUsersInRoom(user.room)
+
+        })
         callback();
     
     })
@@ -47,13 +53,13 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
         if(filter.isProfane(message)){
             return callback("Profanity is not allowed");  //? only sending callback data if profane
         }
-        io.to(user.room).emit('message',generateMessage(message))
+        io.to(user.room).emit('message',generateMessage(user.username,message))
         callback(); //? otherwise, send no callback data
     })
     socket.on('sendLocation',(coords,callback)=>{
         const user = getUser(socket.id)
         // When the location string is sent, output a GMaps link
-        io.to(user.room).emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`));
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username,`https://google.com/maps?q=${coords.latitude},${coords.longitude}`));
         callback(); //! ACKNOWLEDGE
         // Back to client
     })
@@ -62,7 +68,11 @@ io.on('connection',(socket)=>{  //? The socket parameter holds information about
     socket.on('disconnect',()=>{
         const user = removeUser(socket.id);
         if(user){
-            io.to(user.room).emit('message',generateMessage(`${user.username} has left the chat`));
+            io.to(user.room).emit('message',generateMessage("Chatbot",`${user.username} has left the chat`));
+            io.to(user.room).emit('roomData',{
+                room:user.room,
+                users:getUsersInRoom(user.room)
+            })
         }
     })
 })
